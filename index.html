@@ -153,7 +153,7 @@ const SCALE = (low, high) => [`1 – ${low}`, '2', '3', '4', `5 – ${high}`];
 const POST_QUESTIONS = [
   { q: 'On a scale of 1–5, how stressed were you during this survey?', options: SCALE('Not stressed', 'Most stressed'), values: [1, 2, 3, 4, 5] },
   { q: 'On a scale of 1–5, how much did the amount of time affect your answers?', options: SCALE('Not at all', 'A lot'), values: [1, 2, 3, 4, 5] },
-  { q: 'Do you play a competitive sport?', options: ['Yes', 'No', 'N/A'] },
+  { q: 'Do you play a competitive sport (High school, collegiate, travel/club team)? If you have never played a competitive sport select "N/A", if you used to play a competitive sport, but do not participate anymore, select "No".', options: ['Yes', 'No', 'N/A'] },
   { q: 'How many missed deadlines or missing assignments have you had in the past month?', options: ['0', '1', '2', '3+', 'N/A'] }
 ];
 
