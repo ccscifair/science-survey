@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Research survey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Literata:opsz,wght@7..72,400;7..72,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #e9eef2; --surface: #ffffff; --ink: #18222d; --muted: #56636f; --line: #c9d3db;
+  --accent: #1f5f8b; --accent-ink: #ffffff; --accent-soft: #dce9f3; --warn: #b5481f; --ok: #2c7a4b;
+  --serif: "Literata", Georgia, "Times New Roman", serif;
+  --sans: "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, sans-serif;
+  box-sizing: border-box; color-scheme: light;
+  padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #11171d; --surface: #1a232c; --ink: #e6ecf1; --muted: #9aa8b4; --line: #2f3d4a;
+    --accent: #6fb0e0; --accent-ink: #0d1820; --accent-soft: #1f3445; --warn: #f08a5d; --ok: #6cc896;
+    color-scheme: dark;
+  }
+}
+*, *::before, *::after { box-sizing: inherit; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 1.0625rem; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+main { max-width: 40rem; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(1.7rem, 4vw, 2.2rem); line-height: 1.2; margin: 0 0 1rem; }
+h2 { font-family: var(--serif); font-weight: 600; font-size: 1.35rem; margin: 0 0 .75rem; }
+p { margin: 0 0 1rem; }
+.muted { color: var(--muted); }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 1.5rem; }
+.consent-text { font-family: var(--serif); line-height: 1.7; }
+.consent-image { margin: 0 0 1.25rem; }
+.consent-image img { display: block; max-width: 100%; height: auto; border: 1px solid var(--line); border-radius: 4px; background: #fff; }
+.consent-image a { font-size: .9rem; color: var(--accent); }
+label.field { display: block; font-weight: 700; margin: 1.5rem 0 .4rem; }
+input[type="text"] {
+  font: inherit; font-size: 1.4rem; letter-spacing: .15em; text-transform: uppercase;
+  width: 8rem; padding: .45rem .6rem; border: 2px solid var(--line); border-radius: 4px; background: var(--bg); color: var(--ink);
+}
+input[type="text"]:focus { border-color: var(--accent); outline: none; }
+.hint { font-size: .9rem; color: var(--muted); margin-top: .35rem; }
+.error { color: var(--warn); font-size: .95rem; margin-top: .5rem; min-height: 1.4em; }
+.actions { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: 1.75rem; align-items: center; }
+button { font: inherit; font-weight: 700; cursor: pointer; border-radius: 4px; padding: .7rem 1.4rem; border: 2px solid var(--accent); background: var(--accent); color: var(--accent-ink); }
+button.secondary { background: transparent; color: var(--accent); }
+button:disabled { opacity: .45; cursor: not-allowed; }
+button:focus-visible, .option:focus-within { outline: 3px solid var(--accent); outline-offset: 2px; }
+.progress-row { display: flex; justify-content: space-between; align-items: baseline; font-size: .95rem; color: var(--muted); margin-bottom: .6rem; }
+.clock { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--ink); font-size: 1.15rem; }
+.clock.low { color: var(--warn); }
+.timebar { height: 10px; background: var(--accent-soft); border-radius: 5px; overflow: hidden; margin-bottom: 2rem; }
+.timebar > div { height: 100%; width: 100%; background: var(--accent); transform-origin: left center; }
+.timebar.low > div { background: var(--warn); }
+.timebar.untimed > div { background: var(--line); }
+.qtext { font-family: var(--serif); font-size: clamp(1.3rem, 3.2vw, 1.6rem); line-height: 1.4; margin: 0 0 1.5rem; }
+.options { display: grid; gap: .6rem; }
+.option { display: flex; gap: .8rem; align-items: center; cursor: pointer; padding: .85rem 1rem; border: 2px solid var(--line); border-radius: 6px; background: var(--surface); }
+.option input { width: 1.15rem; height: 1.15rem; accent-color: var(--accent); margin: 0; flex: none; }
+.option:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.notice { border-left: 4px solid var(--accent); background: var(--accent-soft); padding: .8rem 1rem; border-radius: 0 4px 4px 0; margin-bottom: 1.5rem; font-size: .95rem; }
+.big-check { font-size: 2.5rem; color: var(--ok); line-height: 1; margin-bottom: .75rem; }
+textarea { width: 100%; min-height: 8rem; font: .85rem/1.4 ui-monospace, Menlo, Consolas, monospace; padding: .6rem; border: 1px solid var(--line); border-radius: 4px; background: var(--bg); color: var(--ink); }
+</style>
+</head>
+<body>
+<main id="app" aria-live="polite"></main>
+
+<script>
+/* =====================================================================
+   SETTINGS — edit everything in this section
+   ===================================================================== */
+
+// Paste your Google Apps Script web app URL here (ends in /exec).
+const SUBMIT_URL = "PASTE_YOUR_WEB_APP_URL_HERE";
+
+const STUDY_TITLE = "Research survey";
+
+// Consent wording shown above the initials box.
+const CONSENT_PARAGRAPHS = [
+  "You are invited to take part in a research project. The survey has short multiple-choice questions and takes about 5–10 minutes.",
+  "Some participants will have a time limit for each question. If time runs out, the survey moves on to the next question automatically.",
+  "Your name is not collected. Your answers are stored with a random participant code and your initials, which are used only to record your consent.",
+  "Taking part is voluntary. You may stop at any time by closing this page.",
+  "If you have questions about this project, contact the researcher at: [your email here]."
+];
+
+// Optional: a photo of your endorsement/consent form, shown above the text.
+// Upload the image to your GitHub repo next to index.html and put its file name here,
+// e.g. "endorsement.jpg". Leave as "" to show no image.
+const CONSENT_IMAGE = "";
+
+// Time conditions in seconds (null = no time limit).
+const CONDITIONS = [
+  { id: "untimed", label: "No time limit", seconds: null },
+  { id: "t30", label: "30 seconds", seconds: 30 },
+  { id: "t15", label: "15 seconds", seconds: 15 },
+  { id: "t10", label: "10 seconds", seconds: 10 }
+];
+
+// Your questions. "correct" is the number of the right option, counting from 1.
+const QUESTIONS = [
+  { q: 'What is the periodic symbol of Carbon?', options: ['C', 'Cl', 'H', 'Fe'], correct: 1 },
+  { q: 'What is a non active volcano called?', options: ['Stable', 'Dormant', 'Sleeping', 'Relaxes'], correct: 2 },
+  { q: 'Which element is most abundant in the atmosphere?', options: ['Nitrogen', 'Oxygen', 'Carbon Dioxide', 'Hydrogen'], correct: 1 },
+  { q: 'What is the product of photosynthesis?', options: ['4 C6H12O6 + 4 H2O', 'C6H12O6 + 6 O2', '6 CO2 + 6 H2O', '2 CO2 + 2 H2O'], correct: 2 },
+  { q: 'Which organelle is often called the "powerhouse of the cell"?', options: ['Cytoplasm', 'Nucleus', 'Mitochondria', 'Lysosomes'], correct: 3 },
+  { q: 'Does sound travel farther on water or land?', options: ['Water', 'Land', 'It travels the same distance on both', 'Sound does not travel on water or land'], correct: 1 },
+  { q: 'What function do bats use to navigate and hunt?', options: ['Synesthesia', 'Echolocation', 'Electroreception', 'Magnetic Reception'], correct: 2 },
+  { q: 'What do numbers multiplied ( x ) by 0 equal?', options: ['0', 'itself', '1', 'infinity'], correct: 1 },
+  { q: 'What is 10% of 200?', options: ['40', '20', '200', '10'], correct: 2 },
+  { q: 'What is 36/6 simplified to a whole number?', options: ['7', '10', '3', '6'], correct: 4 },
+  { q: 'How many inches are in a yard?', options: ['12', '24', '36', '48'], correct: 3 },
+  { q: 'How many sides does a decagon have?', options: ['12', '20', '10', '13'], correct: 3 },
+  { q: 'Is 57 a prime number?', options: ['No', 'Yes'], correct: 1 },
+  { q: 'How many factors does 36 have?', options: ['36', '6', '9', '4'], correct: 3 },
+  { q: 'Which word is the best example of a hyperbole?', options: ['dog', 'forever', 'bam', 'running'], correct: 2 },
+  { q: 'Which word is the best example of a noun?', options: ['slammed', 'pink', 'boat', 'love'], correct: 3 },
+  { q: 'Which word is the best example of a verb?', options: ['run', 'cat', 'blue', 'bam'], correct: 1 },
+  { q: 'Which sentence is an example of present tense?', options: ['She will walk to the park.', 'She walked to the park.', 'She walks to the park.'], correct: 3 },
+  { q: 'Which sentence is in past tense?', options: ['She will win the championship!', 'She won the championship!', 'She is winning the championship!'], correct: 2 },
+  { q: 'Which sentence includes a simile?', options: ['She is pretty like a beautiful sunset.', 'She watched the Bears beat the Packers.', 'He enjoyed watching the school play.', 'He wished he went to bed earlier.'], correct: 1 },
+  { q: 'How many continents are there?', options: ['5', '6', '7', '8'], correct: 3 },
+  { q: 'Which ocean is on the EAST coast of the United States?', options: ['Atlantic Ocean', 'Pacific Ocean', 'Indian Ocean', 'Gulf of Mexico'], correct: 1 },
+  { q: 'What year was the Declaration of Independence signed?', options: ['1800', '1781', '1775', '1776'], correct: 4 },
+  { q: 'Who was the SECOND (2) president of the United States?', options: ['Thomas Jefferson', 'James Madison', 'James Monroe', 'John Adams'], correct: 4 },
+  { q: 'What phenomenon does high demand and low supply cause?', options: ['inflation', 'deflation', 'economic depression', 'tariffs'], correct: 1 },
+  { q: 'What ancient civilization is known for building the Pyramids?', options: ['Aztecs', 'Incas', 'Mayans', 'Egyptians'], correct: 4 },
+  { q: 'What is the LARGEST state in the United States?', options: ['Texas', 'Alaska', 'Maine', 'Colorado'], correct: 2 }
+].map(x => ({ text: x.q ?? x.text, options: x.options, answer: x.correct ? x.options[x.correct - 1] : x.answer }));
+
+// Shuffle question order for each participant?
+const SHUFFLE_QUESTIONS = false;
+
+// Assign each new participant to the group with the fewest completed responses (true),
+// or purely at random (false). Falls back to random if the sheet can't be reached.
+const BALANCE_GROUPS = true;
+
+/* ===================== end of settings ===================== */
+
+const app = document.getElementById("app");
+const params = new URLSearchParams(location.search);
+const IS_TEST = params.has("test"); // open the page with ?test=1 to mark your own trial runs
+const DONE_KEY = "survey_done_" + location.pathname;
+
+const state = { condition: null, pid: null, initials: "", consentAt: null, startedAt: null, order: [], index: 0, answers: [], timer: null, qStart: 0, selected: null };
+
+const el = (tag, attrs = {}, ...kids) => {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") n.className = v;
+    else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
+    else if (v === true) n.setAttribute(k, "");
+    else if (v !== false && v != null) n.setAttribute(k, v);
+  }
+  for (const k of kids.flat()) if (k != null) n.append(k.nodeType ? k : document.createTextNode(k));
+  return n;
+};
+const randInt = (n) => { const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] % n; };
+const makePid = () => "P-" + Array.from({ length: 6 }, () => "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"[randInt(32)]).join("");
+const shuffle = (arr) => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = randInt(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const stopTimer = () => { if (state.timer) cancelAnimationFrame(state.timer); state.timer = null; };
+const show = (...nodes) => { stopTimer(); app.replaceChildren(...nodes); window.scrollTo(0, 0); const h = app.querySelector("h1, .qtext"); if (h) { h.tabIndex = -1; h.focus({ preventScroll: true }); } };
+const alreadyDone = () => { try { return localStorage.getItem(DONE_KEY) === "1"; } catch { return false; } };
+const markDone = () => { try { localStorage.setItem(DONE_KEY, "1"); } catch {} };
+
+function renderWelcome() {
+  if (alreadyDone() && !IS_TEST) {
+    return show(el("h1", {}, "You’ve already completed this survey"), el("p", {}, "Thank you for taking part. Each person can respond once."));
+  }
+  const initials = el("input", { type: "text", id: "initials", maxlength: "4", autocomplete: "off", "aria-describedby": "initialsHint initialsErr" });
+  const err = el("div", { class: "error", id: "initialsErr", role: "alert" });
+  const go = el("button", {}, "I agree, continue");
+  const agree = async () => {
+    const v = initials.value.trim().toUpperCase();
+    if (!/^[A-Z]{2,4}$/.test(v)) { err.textContent = "Enter 2 to 4 letters for your initials."; initials.focus(); return; }
+    go.disabled = true; go.textContent = "One moment…";
+    state.initials = v;
+    state.consentAt = new Date().toISOString();
+    await assignCondition();
+    renderInstructions();
+  };
+  go.addEventListener("click", agree);
+  initials.addEventListener("keydown", (e) => { if (e.key === "Enter") agree(); });
+
+  show(
+    IS_TEST ? el("div", { class: "notice" }, "Test mode: this run will be marked as a test in your sheet.") : null,
+    el("h1", {}, STUDY_TITLE),
+    el("div", { class: "panel" },
+      el("h2", {}, "Consent to participate"),
+      CONSENT_IMAGE ? el("figure", { class: "consent-image", style: "margin:0 0 1.25rem" },
+        el("img", { src: CONSENT_IMAGE, alt: "Endorsement form for this study" }),
+        el("a", { href: CONSENT_IMAGE, target: "_blank", rel: "noopener" }, "Open the form full size")) : null,
+      el("div", { class: "consent-text" }, CONSENT_PARAGRAPHS.map(p => el("p", {}, p))),
+      el("p", {}, el("strong", {}, "By typing your initials below, you confirm that you have read this information and agree to take part.")),
+      el("label", { class: "field", for: "initials" }, "Your initials"),
+      initials,
+      el("div", { class: "hint", id: "initialsHint" }, "Letters only, for example JD."),
+      err,
+      el("div", { class: "actions" }, go, el("button", { class: "secondary", onclick: renderDeclined }, "I do not agree"))
+    )
+  );
+}
+
+function renderDeclined() {
+  show(el("h1", {}, "Thank you"), el("p", {}, "You chose not to take part. No answers were recorded. You can close this page."));
+}
+
+async function assignCondition() {
+  let pick = null;
+  if (BALANCE_GROUPS && SUBMIT_URL.startsWith("https://")) {
+    try {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 4000);
+      const res = await fetch(SUBMIT_URL + "?action=counts", { signal: ctrl.signal });
+      clearTimeout(t);
+      const counts = await res.json();
+      const min = Math.min(...CONDITIONS.map(c => counts[c.id] || 0));
+      const lowest = CONDITIONS.filter(c => (counts[c.id] || 0) === min);
+      pick = lowest[randInt(lowest.length)];
+    } catch (e) { /* fall back to random */ }
+  }
+  state.condition = pick || CONDITIONS[randInt(CONDITIONS.length)];
+  state.pid = makePid();
+  state.order = SHUFFLE_QUESTIONS ? shuffle(QUESTIONS.map((_, i) => i)) : QUESTIONS.map((_, i) => i);
+  state.index = 0;
+  state.answers = [];
+}
+
+function renderInstructions() {
+  const c = state.condition;
+  const timing = c.seconds
+    ? `You will have ${c.seconds} seconds to answer each question. A bar at the top shows the time remaining. If time runs out, the survey moves to the next question.`
+    : "There is no time limit. Take as long as you need on each question.";
+  show(
+    el("h1", {}, "Before you start"),
+    el("p", {}, `There are ${QUESTIONS.length} questions. Choose one answer for each, then select Next. You can’t go back to earlier questions.`),
+    el("div", { class: "notice" }, timing),
+    el("p", { class: "muted" }, "Please complete the survey in one sitting without distractions."),
+    el("div", { class: "actions" }, el("button", { onclick: () => { state.startedAt = new Date().toISOString(); renderQuestion(); } }, "Start the survey"))
+  );
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[state.order[state.index]];
+  const c = state.condition;
+  state.selected = null;
+  const clock = el("span", { class: "clock" }, c.seconds ? `${c.seconds}s` : "No time limit");
+  const fill = el("div");
+  const bar = el("div", { class: "timebar" + (c.seconds ? "" : " untimed"), role: c.seconds ? "timer" : null, "aria-label": c.seconds ? "Time remaining" : null }, fill);
+  const next = el("button", { disabled: true, onclick: () => record(false) }, state.index === QUESTIONS.length - 1 ? "Finish" : "Next");
+  const options = el("div", { class: "options", role: "radiogroup", "aria-labelledby": "qtext" },
+    q.options.map((opt, oi) => el("label", { class: "option" },
+      el("input", { type: "radio", name: "q" + state.index, value: String(oi), onchange: () => { state.selected = oi; next.disabled = false; } }),
+      el("span", {}, opt))));
+
+  show(
+    el("div", { class: "progress-row" }, el("span", {}, `Question ${state.index + 1} of ${QUESTIONS.length}`), clock),
+    bar,
+    el("p", { class: "qtext", id: "qtext" }, q.text),
+    options,
+    el("div", { class: "actions" }, next)
+  );
+
+  state.qStart = performance.now();
+  if (c.seconds) {
+    const total = c.seconds * 1000;
+    let lastShown = c.seconds;
+    const tick = () => {
+      const left = Math.max(0, total - (performance.now() - state.qStart));
+      fill.style.transform = `scaleX(${left / total})`;
+      const secs = Math.ceil(left / 1000);
+      if (secs !== lastShown) { clock.textContent = secs + "s"; lastShown = secs; }
+      const low = left <= Math.min(5000, total * 0.34);
+      clock.classList.toggle("low", low); bar.classList.toggle("low", low);
+      if (left <= 0) { record(true); return; }
+      state.timer = requestAnimationFrame(tick);
+    };
+    state.timer = requestAnimationFrame(tick);
+  }
+}
+
+function record(timedOut) {
+  stopTimer();
+  const qi = state.order[state.index];
+  const q = QUESTIONS[qi];
+  const rt = Math.round(performance.now() - state.qStart);
+  const answer = state.selected == null ? "" : q.options[state.selected];
+  state.answers.push({
+    question: qi + 1, position: state.index + 1, answer,
+    correct: q.answer === undefined ? "" : (answer === q.answer ? 1 : 0),
+    rt: state.condition.seconds ? Math.min(rt, state.condition.seconds * 1000) : rt,
+    timedOut: timedOut ? 1 : 0
+  });
+  state.index++;
+  if (state.index < QUESTIONS.length) renderQuestion(); else submit();
+}
+
+async function submit() {
+  show(el("h1", {}, "Saving your answers…"));
+  const graded = state.answers.filter(a => a.correct !== "");
+  const row = {
+    participant_id: state.pid,
+    condition: state.condition.id,
+    time_limit_s: state.condition.seconds ?? "none",
+    consent_initials: state.initials,
+    consent_at: state.consentAt,
+    started_at: state.startedAt,
+    completed_at: new Date().toISOString(),
+    score: graded.reduce((s, a) => s + a.correct, 0),
+    out_of: graded.length,
+    timed_out_count: state.answers.reduce((s, a) => s + a.timedOut, 0),
+    test: IS_TEST ? 1 : 0
+  };
+  state.answers.slice().sort((a, b) => a.question - b.question).forEach(a => {
+    row[`q${a.question}_answer`] = a.answer;
+    row[`q${a.question}_correct`] = a.correct;
+    row[`q${a.question}_rt_ms`] = a.rt;
+    row[`q${a.question}_timed_out`] = a.timedOut;
+    row[`q${a.question}_position`] = a.position;
+  });
+
+  let saved = false;
+  if (SUBMIT_URL.startsWith("https://")) {
+    for (let attempt = 0; attempt < 2 && !saved; attempt++) {
+      try {
+        // text/plain + no-cors avoids a CORS preflight, which Apps Script doesn't answer
+        await fetch(SUBMIT_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(row) });
+        saved = true;
+      } catch (e) { await new Promise(r => setTimeout(r, 1000)); }
+    }
+  }
+
+  if (saved) {
+    if (!IS_TEST) markDone();
+    show(el("div", { class: "big-check", "aria-hidden": "true" }, "✓"),
+      el("h1", {}, "Thank you for taking part"),
+      el("p", {}, "Your answers have been saved. You can close this page now."),
+      el("p", { class: "muted" }, `Your participant code is ${state.pid}.`));
+  } else {
+    const box = el("textarea", { readonly: true, "aria-label": "Your responses" }, JSON.stringify(row));
+    show(el("h1", {}, "Your answers couldn’t be saved"),
+      el("p", {}, "Please check your internet connection and try again. If it still doesn’t work, copy the text below and send it to the researcher."),
+      box,
+      el("div", { class: "actions" },
+        el("button", { onclick: submit }, "Try again"),
+        el("button", { class: "secondary", onclick: async (e) => {
+          try { await navigator.clipboard.writeText(box.value); e.target.textContent = "Copied"; } catch { box.select(); }
+        } }, "Copy responses")));
+  }
+}
+
+document.title = STUDY_TITLE;
+renderWelcome();
+</script>
+</body>
+</html>
