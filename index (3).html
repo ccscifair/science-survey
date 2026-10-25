@@ -77,17 +77,17 @@ textarea { width: 100%; min-height: 8rem; font: .85rem/1.4 ui-monospace, Menlo, 
    ===================================================================== */
 
 // Paste your Google Apps Script web app URL here (ends in /exec).
-const SUBMIT_URL = "PASTE_YOUR_WEB_APP_URL_HERE";
+const SUBMIT_URL = "https://script.google.com/macros/s/AKfycbw0n6drpMOcNFnEs2rtftQyi5PiDvxp7l9aEe6XFDRnExvMOXXKk6Zgve72lgncFW4_SQ/exec";
 
 const STUDY_TITLE = "Research survey";
 
 // Consent wording shown above the initials box.
 const CONSENT_PARAGRAPHS = [
-  "You are invited to take part in a research project. The survey has short multiple-choice questions and takes about 5–10 minutes.",
+  "You are invited to take part in a research project. The survey has short multiple-choice questions and takes about 2 - 4 minutes.",
   "Some participants will have a time limit for each question. If time runs out, the survey moves on to the next question automatically.",
   "Your name is not collected. Your answers are stored with a random participant code and your initials, which are used only to record your consent.",
   "Taking part is voluntary. You may stop at any time by closing this page.",
-  "If you have questions about this project, contact the researcher at: [your email here]."
+  "If you have questions about this project, contact the researcher at: ccarey6@cps.edu."
 ];
 
 // Optional: a photo of your endorsement/consent form, shown above the text.
@@ -98,9 +98,9 @@ const CONSENT_IMAGE = "";
 // Time conditions in seconds (null = no time limit).
 const CONDITIONS = [
   { id: "untimed", label: "No time limit", seconds: null },
-  { id: "t30", label: "30 seconds", seconds: 30 },
   { id: "t15", label: "15 seconds", seconds: 15 },
-  { id: "t10", label: "10 seconds", seconds: 10 }
+  { id: "t10", label: "10 seconds", seconds: 10 },
+  { id: "t5", label: "5 seconds", seconds: 5 }
 ];
 
 // Your questions. "correct" is the number of the right option, counting from 1.
@@ -154,7 +154,7 @@ const POST_QUESTIONS = [
   { q: 'On a scale of 1–5, how stressed were you during this survey?', options: SCALE('Not stressed', 'Most stressed'), values: [1, 2, 3, 4, 5] },
   { q: 'On a scale of 1–5, how much did the amount of time affect your answers?', options: SCALE('Not at all', 'A lot'), values: [1, 2, 3, 4, 5] },
   { q: 'Do you play a competitive sport?', options: ['Yes', 'No', 'N/A'] },
-  { q: 'How many missed deadlines or missing assignments have you had in the past month?', options: ['0', '1', '2', '3+'] }
+  { q: 'How many missed deadlines or missing assignments have you had in the past month?', options: ['0', '1', '2', '3+', 'N/A'] }
 ];
 
 // Assign each new participant to the group with the fewest completed responses (true),
