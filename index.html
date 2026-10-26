@@ -215,8 +215,7 @@ function renderWelcome() {
       el("h2", {}, "Consent to participate"),
        el("div", { class: "consent-text" }, CONSENT_PARAGRAPHS.map(p => el("p", {}, p))),
        CONSENT_IMAGE ? el("figure", { class: "consent-image", style: "margin:0 0 1.25rem" },
-        el("img", { src: CONSENT_IMAGE, alt: "Endorsement form for this study" }),
-        el("a", { href: CONSENT_IMAGE, target: "_blank", rel: "noopener" }, "Open the form full size")) : null,
+        el("img", { src: CONSENT_IMAGE, alt: "Endorsement form for this study" })) : null,
       el("p", {}, el("strong", {}, "By typing your initials below, you confirm that you have read this information and agree to take part.")),
       el("label", { class: "field", for: "initials" }, "Your initials"),
       initials,
@@ -386,8 +385,8 @@ async function submit() {
   if (saved) {
     if (!IS_TEST) markDone();
     show(el("div", { class: "big-check", "aria-hidden": "true" }, "✓"),
-      el("h1", {}, "Thank you for taking part"),
-      el("p", {}, "Your answers have been saved. You can close this page now."),
+      el("h1", {}, "Thank you for taking part."),
+      el("p", {}, "Your answers have been saved. You can close this page now. Please share this survey with others."),
       el("p", { class: "muted" }, `Your participant code is ${state.pid}.`));
   } else {
     const box = el("textarea", { readonly: true, "aria-label": "Your responses" }, JSON.stringify(row));
